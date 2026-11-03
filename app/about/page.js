@@ -7,6 +7,7 @@ import ImageReveal from "@/components/motion/ImageReveal";
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
 import { getBreadcrumbSchema } from "@/lib/schema";
+import About3DClient from "@/components/about/About3DClient";
 
 export const metadata = {
   title: siteConfig.pages.about.title,
@@ -24,7 +25,7 @@ export const metadata = {
         url: siteConfig.defaultOgImage,
         width: 1200,
         height: 630,
-        alt: "Pali, Wedding & Lifestyle Photographer",
+        alt: "Vivek Pali, Wedding & Lifestyle Photographer",
       },
     ],
   },
@@ -91,7 +92,12 @@ export default function AboutPage() {
   return (
     <>
       <JsonLd data={breadcrumbSchema} />
-      <div className="pt-32 pb-24 md:pt-40 md:pb-36 bg-[#F5F2EB] text-[#242421]">
+      {/* Immersive 3D Photography Studio & Optical Motion Graphics Experience */}
+      <div className="pt-20 bg-[#111311]">
+        <About3DClient />
+      </div>
+
+      <div className="pt-24 pb-24 md:pt-36 md:pb-36 bg-[#F5F2EB] text-[#242421]">
         <div className="max-w-7xl mx-auto px-6 md:px-12 space-y-28 md:space-y-36">
           {/* Top Hero / Intro Section */}
           <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
@@ -113,7 +119,7 @@ export default function AboutPage() {
                   </ImageReveal>
 
                   <div className="mt-4 flex justify-between items-center text-[10px] uppercase tracking-[0.22em] text-[#777B60]">
-                    <span>Pali</span>
+                    <span>Vivek Pali</span>
                     <span>Storyteller with a Lens</span>
                   </div>
                 </div>
@@ -127,7 +133,7 @@ export default function AboutPage() {
                   About the Storyteller
                 </span>
                 <h1 className="font-editorial text-4xl sm:text-5xl md:text-6xl text-[#242421] font-light leading-[1.05]">
-                  Hello! I’m Pali.
+                  Hello! I’m Vivek Pali.
                 </h1>
                 <p className="font-editorial text-2xl text-[#777B60] font-light mt-2 italic">
                   Capturing your forever in every frame.
@@ -137,13 +143,13 @@ export default function AboutPage() {
               <Reveal delay={0.2}>
                 <div className="space-y-5 text-base text-[#5E5D57] font-light leading-relaxed">
                   <p>
-                    I am a storyteller with a lens, dedicated to capturing the beauty, connection, and raw emotions that define your wedding day and celebrations.
+                    I&apos;m Vivek Pali, a professional photographer and visual storyteller dedicated to documenting the authentic emotions, quiet connections, and vibrant celebrations that define life&apos;s most cherished milestones.
                   </p>
                   <p>
-                    Your wedding is a vibrant tapestry of love, joy, and deep human bond. My goal is to ensure that your photography experience is as effortless, relaxed, and enjoyable as the day itself. With a warm and easygoing approach, I create an atmosphere where you can relax and be your truest selves, allowing your unique story to unfold naturally.
+                    My photography journey began with a simple creative perspective: the most meaningful photographs aren&apos;t stiffly posed—they&apos;re felt. Whether framing the sacred vows of a wedding day, the candid joy of a pre-wedding session, or the quiet grandeur of natural landscapes, my focus is always on capturing genuine human bonds in their purest form.
                   </p>
                   <p>
-                    Every click whispers a story, and each frame holds a dream. Together, we’ll create timeless images that you and your families will treasure forever.
+                    My style and professional approach are rooted in creating a calm, warm, and effortless environment. Rather than directing every micro-movement, I work with an easygoing, documentary-led sensibility that allows you to be fully present and your truest selves. Every click whispers a story, and together we create timeless, beautifully retouched heirloom imagery to treasure for generations.
                   </p>
                 </div>
               </Reveal>

@@ -30,21 +30,20 @@ export const siteConfig = {
   logoUrl: "/media/2024/05/PNG-golden-1.png",
 
   // Default SEO Fallbacks
-  defaultTitle: "Pali Photography | Wedding, Pre-Wedding & Landscape Photographer",
+  defaultTitle:
+    "Pali Photography | Wedding, Pre-Wedding & Landscape Photographer",
   titleTemplate: "%s | Pali Photography",
   defaultDescription:
     "Hello! I’m Pali, a storyteller with a lens, capturing the beauty, raw emotions, and timeless connections that define your wedding day and celebrations.",
 
   // Primary Social / OpenGraph Asset
-  defaultOgImage:
-    "/media/2024/05/17-scaled.jpg",
-  defaultOgImageAlt:
-    "Pali Photography — Capturing Your Forever in Every Frame",
+  defaultOgImage: "/media/2024/05/17-scaled.jpg",
+  defaultOgImageAlt: "Pali Photography — Capturing Your Forever in Every Frame",
 
   // Business Coordinates & Contacts
   contact: {
-    email: "contact@paliphotography.com",
-    telephone: "+91 98765 43210",
+    email: "paliphoto@hotmail.com",
+    telephone: "+44 7915 069154",
     representationEmail: "bookings@paliphotography.com",
     country: "India",
     locationGeneral: "Destination & Studio Commissions Available Worldwide",
@@ -62,10 +61,9 @@ export const siteConfig = {
 
   // Services offered
   servicesList: [
-    "Weddings & Pre-Weddings",
-    "Creative Engagement Sessions",
-    "Majestic Landscapes",
-    "Childhood Magic & Family Portfolios",
+    "Wedding Photography",
+    "Birthday Photography",
+    "Events & Celebrations",
     "Private Online Gallery & Professional Editing",
   ],
 
@@ -97,9 +95,10 @@ export const siteConfig = {
       path: "/about",
     },
     services: {
-      title: "Photography Services & Collections — Weddings, Couples & Landscapes",
+      title:
+        "Photography Services & Collections — Wedding, Birthday & Events | Vivek Pali",
       description:
-        "Full-day wedding documentation, relaxed engagement sessions, landscape prints, online galleries, and master retouching.",
+        "Cinematic wedding documentation, joyful birthday milestones, and dynamic event photography with private online galleries and master retouching by Vivek Pali.",
       path: "/services",
     },
     contact: {

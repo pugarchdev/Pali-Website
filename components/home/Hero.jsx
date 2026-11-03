@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -47,6 +47,15 @@ export default function Hero() {
 
   const currentPlate = heroPlates[activeMoodIndex];
   const headlineWords = ["Stories", "Told", "Through", "Light", "&", "Mist."];
+
+  // Automate backdrop rotation with a 5-second interval
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveMoodIndex((prevIndex) => (prevIndex + 1) % heroPlates.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [activeMoodIndex, heroPlates.length]);
 
   return (
     <section className="relative min-h-screen flex items-end pb-14 md:pb-20 overflow-hidden bg-[#242421] text-[#FAF9F6]">
@@ -127,7 +136,7 @@ export default function Hero() {
             <span className="w-8 h-[1px] bg-[#777B60]" />
             <span className="flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-[#777B60]" />
-              Alasdair Vance — Highlands &amp; Islands
+              Vivek Pali — Professional Photographer
             </span>
           </motion.div>
 
@@ -161,9 +170,10 @@ export default function Hero() {
             className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end pt-1"
           >
             <p className="md:col-span-8 text-base md:text-lg text-[#D8D2C7] font-light leading-relaxed max-w-xl">
-              An intimate, documentary-led approach to Scotland&apos;s ancient geology,
-              fleeting Atlantic weather, and genuine human milestones. Working between
-              Inverness and the Isle of Skye.
+              A heartfelt, documentary-led storytelling approach by Vivek Pali,
+              capturing raw emotions, candid connections, and timeless milestones.
+              Dedicated photography services across weddings, creative pre-weddings,
+              and majestic landscapes.
             </p>
 
             <div className="md:col-span-4 flex items-center md:justify-end gap-4">

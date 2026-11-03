@@ -26,7 +26,7 @@ export default function Navbar() {
   }, []);
 
   // Determine if current page has an inverted (dark) hero at top
-  const isDarkHero = pathname === "/" || pathname.startsWith("/projects/");
+  const isDarkHero = pathname === "/" || pathname.startsWith("/projects/") || pathname === "/portfolio";
   const isLightNav = isScrolled || !isDarkHero;
 
   const navLinks = [
