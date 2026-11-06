@@ -78,32 +78,64 @@ function createLensFaceTexture() {
   const cx = 512;
   const cy = 512;
 
-  // Outer dark chassis
-  ctx.fillStyle = "#0c0d0f";
-  ctx.fillRect(0, 0, 1024, 1024);
+  // Clear 100% transparent center so interior optical glass elements and aperture are fully visible
+  ctx.clearRect(0, 0, 1024, 1024);
 
-  // Concentric filter threads
-  for (let r = 490; r >= 420; r -= 10) {
-    ctx.strokeStyle = r % 20 === 0 ? "#25262c" : "#141518";
-    ctx.lineWidth = 4;
+  // Outer dark anodized aluminum chassis band (radius 300 to 512)
+  ctx.beginPath();
+  ctx.arc(cx, cy, 510, 0, Math.PI * 2);
+  ctx.arc(cx, cy, 300, 0, Math.PI * 2, true);
+  ctx.fillStyle = "#111215";
+  ctx.fill();
+
+  // Concentric fine filter thread grooves on outer rim (52mm thread)
+  for (let r = 504; r >= 486; r -= 4) {
+    ctx.strokeStyle = r % 8 === 0 ? "#2d3039" : "#17181c";
+    ctx.lineWidth = 2.5;
     ctx.beginPath();
     ctx.arc(cx, cy, r, 0, Math.PI * 2);
     ctx.stroke();
   }
 
-  // Matte black text rim surface
-  ctx.fillStyle = "#16171a";
+  // Spun metal lathe micro-grooves across the black nameplate ring
+  for (let r = 480; r >= 320; r -= 5) {
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.03)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.stroke();
+  }
+
+  // Inner beveled retaining ring (silver metallic chamfer)
+  ctx.strokeStyle = "#64748b";
+  ctx.lineWidth = 5;
   ctx.beginPath();
-  ctx.arc(cx, cy, 415, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "#0a0a0c";
-  ctx.lineWidth = 8;
+  ctx.arc(cx, cy, 315, 0, Math.PI * 2);
   ctx.stroke();
 
-  // Helper to draw text along circular arc
-  function drawCurvedText(text, radius, startAngle, letterSpacing, fillStyle, isBoldRed = false) {
+  ctx.strokeStyle = "#1e2229";
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 308, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Spanner wrench mounting notches (authentic camera optical engineering detail)
+  for (let a of [0, Math.PI]) {
     ctx.save();
-    ctx.font = isBoldRed ? "900 36px 'Arial', sans-serif" : "bold 34px 'Arial', sans-serif";
+    ctx.translate(cx, cy);
+    ctx.rotate(a);
+    ctx.fillStyle = "#0c0d0f";
+    ctx.fillRect(302, -8, 16, 16);
+    ctx.strokeStyle = "#475569";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(302, -8, 16, 16);
+    ctx.restore();
+  }
+
+  // Helper to draw text along circular arc
+  function drawCurvedText(text, radius, startAngle, letterSpacing, fillStyle, fontStr) {
+    ctx.save();
+    ctx.font = fontStr;
     ctx.fillStyle = fillStyle;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -126,26 +158,15 @@ function createLensFaceTexture() {
     ctx.restore();
   }
 
-  // Draw signature Canon FD 50mm 1:1.4 S.S.C. markings
-  // 1. "S.S.C." in prominent red
-  drawCurvedText("S.S.C.", 345, -Math.PI * 0.72, 4, "#e52323", true);
-  // 2. "CANON LENS MADE IN JAPAN" in white
-  drawCurvedText("CANON LENS MADE IN JAPAN", 345, -Math.PI * 0.42, 5, "#f1f5f9");
-  // 3. "CANON LENS FD 50mm 1:1.4" on bottom arc
-  drawCurvedText("CANON LENS FD 50mm 1:1.4", 345, Math.PI * 0.28, 5, "#f1f5f9");
-
-  // Inner beveled retaining ring
-  ctx.strokeStyle = "#272830";
-  ctx.lineWidth = 14;
-  ctx.beginPath();
-  ctx.arc(cx, cy, 275, 0, Math.PI * 2);
-  ctx.stroke();
-
-  // Glass aperture center
-  ctx.fillStyle = "#040405";
-  ctx.beginPath();
-  ctx.arc(cx, cy, 260, 0, Math.PI * 2);
-  ctx.fill();
+  // Signature Canon FD 50mm 1:1.4 S.S.C. markings (drawn at r = 408, centered on the ring)
+  // 1. "S.S.C." in prominent Canon red
+  drawCurvedText("S.S.C.", 408, -Math.PI * 0.74, 4, "#ff2828", "900 32px 'Arial', sans-serif");
+  // 2. "CANON LENS MADE IN JAPAN" in clean silver-white
+  drawCurvedText("CANON LENS MADE IN JAPAN", 408, -Math.PI * 0.44, 4.5, "#f1f5f9", "bold 26px 'Arial', sans-serif");
+  // 3. "CANON LENS FD 50mm 1:1.4" along bottom arc
+  drawCurvedText("CANON LENS FD 50mm 1:1.4", 408, Math.PI * 0.24, 4.5, "#ffffff", "bold 28px 'Arial', sans-serif");
+  // 4. Lens Serial Number
+  drawCurvedText("Nº 1428590", 408, Math.PI * 0.88, 3.5, "#94a3b8", "bold 20px 'Arial', sans-serif");
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -276,6 +297,67 @@ function createLensBarrelTexture() {
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   return texture;
+}
+
+// Helper: Generates a high-quality studio lighting environment map for glass and metallic PBR reflections
+function createStudioEnvironment(renderer) {
+  const pmremGenerator = new THREE.PMREMGenerator(renderer);
+  pmremGenerator.compileEquirectangularShader();
+
+  const envCanvas = document.createElement("canvas");
+  envCanvas.width = 1024;
+  envCanvas.height = 512;
+  const ctx = envCanvas.getContext("2d");
+
+  // Deep photography studio atmosphere
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, 512);
+  bgGrad.addColorStop(0, "#1e2229");
+  bgGrad.addColorStop(0.5, "#0b0c0e");
+  bgGrad.addColorStop(1, "#15171b");
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1024, 512);
+
+  // Softbox 1: Overhead high-key studio softbox strip (produces sharp glass catch-lights)
+  const sb1 = ctx.createLinearGradient(300, 30, 724, 170);
+  sb1.addColorStop(0, "rgba(255, 255, 255, 0.95)");
+  sb1.addColorStop(0.5, "rgba(240, 248, 255, 0.85)");
+  sb1.addColorStop(1, "rgba(180, 210, 255, 0.1)");
+  ctx.fillStyle = sb1;
+  ctx.beginPath();
+  ctx.roundRect(360, 30, 304, 130, 24);
+  ctx.fill();
+
+  // Softbox 2: Cool silver rim strip (highlights metallic body chamfers and knurling)
+  const sb2 = ctx.createRadialGradient(160, 220, 10, 160, 220, 140);
+  sb2.addColorStop(0, "rgba(215, 235, 255, 0.9)");
+  sb2.addColorStop(0.5, "rgba(140, 180, 240, 0.35)");
+  sb2.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = sb2;
+  ctx.fillRect(40, 100, 240, 240);
+
+  // Softbox 3: Subtle emerald-cyan optical reflection strip (Canon S.S.C. anti-reflective flare)
+  const sb3 = ctx.createRadialGradient(860, 240, 10, 860, 240, 150);
+  sb3.addColorStop(0, "rgba(110, 245, 195, 0.85)");
+  sb3.addColorStop(0.5, "rgba(40, 160, 130, 0.35)");
+  sb3.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = sb3;
+  ctx.fillRect(720, 120, 260, 240);
+
+  // Softbox 4: Deep purple / royal blue optical coating reflection strip (Natural multi-coating glint)
+  const sb4 = ctx.createRadialGradient(512, 380, 10, 512, 380, 180);
+  sb4.addColorStop(0, "rgba(168, 85, 247, 0.75)");
+  sb4.addColorStop(0.4, "rgba(59, 130, 246, 0.5)");
+  sb4.addColorStop(0.8, "rgba(30, 58, 138, 0.2)");
+  sb4.addColorStop(1, "rgba(0, 0, 0, 0)");
+  ctx.fillStyle = sb4;
+  ctx.fillRect(320, 260, 384, 240);
+
+  const envTexture = new THREE.CanvasTexture(envCanvas);
+  envTexture.mapping = THREE.EquirectangularReflectionMapping;
+  const envMap = pmremGenerator.fromEquirectangular(envTexture).texture;
+  pmremGenerator.dispose();
+  envTexture.dispose();
+  return envMap;
 }
 
 // Helper: Generates front wordmarks ("Canon" script on pentaprism and "AT-1" badge)
@@ -660,8 +742,9 @@ function buildVintageCanonAT1() {
   lensGroup.position.set(0, -0.06, 0.32);
   root.add(lensGroup);
 
-  // A) Silver Breech-Lock Bayonet Ring (The iconic Canon FD silver collar!)
-  const breechLockGeo = new THREE.CylinderGeometry(0.58, 0.6, 0.18, 48);
+  // A) Silver Breech-Lock Bayonet Ring (Iconic Canon FD chrome mounting collar)
+  // openEnded: true ensures interior barrel is hollow and unobstructed
+  const breechLockGeo = new THREE.CylinderGeometry(0.58, 0.6, 0.18, 64, 1, true);
   const breechLock = new THREE.Mesh(breechLockGeo, silverMetalMat);
   breechLock.rotation.x = Math.PI / 2;
   breechLock.position.z = 0.09;
@@ -676,15 +759,15 @@ function buildVintageCanonAT1() {
   breechDot.position.set(0, 0.59, 0.09);
   lensGroup.add(breechDot);
 
-  // B) Aperture Selector Ring (Matte black with ribbed edges)
-  const apertureRingGeo = new THREE.CylinderGeometry(0.56, 0.57, 0.16, 48);
+  // B) Aperture Selector Ring (Matte black ribbed anodized aluminum, openEnded: true)
+  const apertureRingGeo = new THREE.CylinderGeometry(0.56, 0.57, 0.16, 64, 1, true);
   const apertureRing = new THREE.Mesh(apertureRingGeo, matteBlackMat);
   apertureRing.rotation.x = Math.PI / 2;
   apertureRing.position.z = 0.24;
   lensGroup.add(apertureRing);
 
-  // C) Main Focus Barrel with Knurled Waffle Grip & Distance Scale
-  const barrelGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.68, 48);
+  // C) Main Focus Barrel with Knurled Waffle Grip & Distance Scale (openEnded: true)
+  const barrelGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.68, 64, 1, true);
   const barrelMat = new THREE.MeshStandardMaterial({
     map: lensBarrelTex,
     roughness: 0.42,
@@ -696,28 +779,77 @@ function buildVintageCanonAT1() {
   barrel.castShadow = true;
   lensGroup.add(barrel);
 
-  // D) Front Filter Thread Rim & Nameplate
-  const nameplateGeo = new THREE.RingGeometry(0.28, 0.54, 48);
-  const nameplateMat = new THREE.MeshStandardMaterial({
-    map: lensFaceTex,
-    roughness: 0.38,
-    metalness: 0.5,
-    side: THREE.DoubleSide,
-  });
-  const nameplate = new THREE.Mesh(nameplateGeo, nameplateMat);
-  nameplate.position.z = 0.985;
-  lensGroup.add(nameplate);
-
-  // Outer Metal Lens Lip
-  const outerLipGeo = new THREE.CylinderGeometry(0.56, 0.55, 0.06, 48);
+  // D) Front 52mm Filter Thread Collar & Outer Bezel Lip (openEnded: true - NO occluding caps!)
+  const outerLipGeo = new THREE.CylinderGeometry(0.56, 0.555, 0.07, 64, 1, true);
   const outerLip = new THREE.Mesh(outerLipGeo, matteBlackMat);
   outerLip.rotation.x = Math.PI / 2;
   outerLip.position.z = 0.99;
   lensGroup.add(outerLip);
 
-  // 7. Dynamic Mechanical 8-Blade Aperture Iris
+  // Front Filter Thread Bezel Ring connecting outer lip to thread rim
+  const filterBezelGeo = new THREE.RingGeometry(0.535, 0.56, 64);
+  const filterBezel = new THREE.Mesh(filterBezelGeo, matteBlackMat);
+  filterBezel.position.z = 1.025;
+  lensGroup.add(filterBezel);
+
+  // Internal filter screw threads (52mm accessory thread)
+  const filterThreadGeo = new THREE.CylinderGeometry(0.538, 0.538, 0.05, 64, 1, true);
+  const filterThread = new THREE.Mesh(
+    filterThreadGeo,
+    new THREE.MeshStandardMaterial({ color: 0x1f232b, roughness: 0.65, metalness: 0.35 })
+  );
+  filterThread.rotation.x = Math.PI / 2;
+  filterThread.position.z = 1.0;
+  lensGroup.add(filterThread);
+
+  // E) Authentic Front Nameplate Ring (Canon FD 50mm 1:1.4 S.S.C.)
+  // Sits cleanly from r = 0.32 to r = 0.535 at z = 0.985, completely visible and unobstructed!
+  const nameplateGeo = new THREE.RingGeometry(0.32, 0.535, 64);
+  const nameplateMat = new THREE.MeshStandardMaterial({
+    map: lensFaceTex,
+    roughness: 0.32,
+    metalness: 0.65,
+    transparent: true,
+    side: THREE.FrontSide,
+  });
+  const nameplate = new THREE.Mesh(nameplateGeo, nameplateMat);
+  nameplate.position.z = 0.985;
+  lensGroup.add(nameplate);
+
+  // F) Black Anodized Retaining Bezel Ring holding the front optical glass
+  const bezelGeo = new THREE.RingGeometry(0.31, 0.325, 64);
+  const bezel = new THREE.Mesh(
+    bezelGeo,
+    new THREE.MeshStandardMaterial({ color: 0x22252a, roughness: 0.45, metalness: 0.75 })
+  );
+  bezel.position.z = 0.986;
+  lensGroup.add(bezel);
+
+  // G) Internal Stepped Anti-Glare Conical Baffles (Connecting elements inside the barrel)
+  const coneBaffleGeo = new THREE.CylinderGeometry(0.31, 0.21, 0.44, 48, 1, true);
+  const coneBaffle = new THREE.Mesh(
+    coneBaffleGeo,
+    new THREE.MeshStandardMaterial({ color: 0x08080a, roughness: 0.95, metalness: 0.05, side: THREE.BackSide })
+  );
+  coneBaffle.rotation.x = Math.PI / 2;
+  coneBaffle.position.z = 0.72;
+  lensGroup.add(coneBaffle);
+
+  // 4 Concentric anti-glare baffle rings that catch fine specular highlights
+  for (let b = 0; b < 4; b++) {
+    const ridgeR = 0.29 - b * 0.022;
+    const ridgeZ = 0.86 - b * 0.09;
+    const ridgeMesh = new THREE.Mesh(
+      new THREE.TorusGeometry(ridgeR, 0.005, 12, 36),
+      new THREE.MeshStandardMaterial({ color: 0x16181d, roughness: 0.8, metalness: 0.35 })
+    );
+    ridgeMesh.position.z = ridgeZ;
+    lensGroup.add(ridgeMesh);
+  }
+
+  // 7. Dynamic Mechanical 8-Blade Aperture Iris (Visible deep inside the lens chamber!)
   const apertureGroup = new THREE.Group();
-  apertureGroup.position.z = 0.52;
+  apertureGroup.position.z = 0.50;
   const blades = [];
 
   const bladeShape = new THREE.Shape();
@@ -727,9 +859,9 @@ function buildVintageCanonAT1() {
   bladeShape.quadraticCurveTo(0.1, 0.18, 0, 0);
   const bladeGeo = new THREE.ShapeGeometry(bladeShape);
   const bladeMat = new THREE.MeshStandardMaterial({
-    color: 0x18191d,
-    roughness: 0.7,
-    metalness: 0.25,
+    color: 0x24262b,
+    roughness: 0.35,
+    metalness: 0.85,
     side: THREE.DoubleSide,
   });
 
@@ -740,7 +872,7 @@ function buildVintageCanonAT1() {
     bladePivot.rotation.z = angle;
 
     const bladeMesh = new THREE.Mesh(bladeGeo, bladeMat);
-    bladeMesh.position.set(0.14, 0, 0);
+    bladeMesh.position.set(0.13, 0, 0);
     bladePivot.add(bladeMesh);
 
     apertureGroup.add(bladePivot);
@@ -748,37 +880,126 @@ function buildVintageCanonAT1() {
   }
   lensGroup.add(apertureGroup);
 
-  // 8. Multi-Coated Convex Front Glass with EMERALD-GREEN ANTI-REFLECTIVE COATING
-  // As clearly seen in the Canon FD 50mm 1:1.4 S.S.C. reference photos!
-  const frontGlassGeo = new THREE.SphereGeometry(0.48, 36, 28);
-  const frontGlassMat = new THREE.MeshPhysicalMaterial({
-    color: 0x153e2e, // Deep emerald green multi-coating hue
-    roughness: 0.04,
-    metalness: 0.08,
-    transmission: 0.92,
-    ior: 1.58,
-    reflectivity: 0.98,
+  // Aperture Iris Base Housing & Reflex Chamber
+  const apertureChamber = new THREE.Mesh(
+    new THREE.RingGeometry(0.11, 0.23, 48),
+    new THREE.MeshStandardMaterial({ color: 0x121316, roughness: 0.7, metalness: 0.4 })
+  );
+  apertureChamber.position.z = 0.498;
+  lensGroup.add(apertureChamber);
+
+  // Internal chamber soft point light softly illuminating aperture blades and interior from within
+  const internalChamberLight = new THREE.PointLight(0xfffaed, 0.85, 1.4);
+  internalChamberLight.position.set(0, 0, 0.46);
+  lensGroup.add(internalChamberLight);
+
+  // =========================================================================
+  // MULTI-ELEMENT OPTICAL GLASS SYSTEM (PBR with natural Blue, Purple & Green Reflections)
+  // =========================================================================
+
+  // --- ELEMENT 3: Rear Optical Glass Element (warm amber / cyan multi-coating) ---
+  const element3Geo = new THREE.SphereGeometry(0.24, 36, 20);
+  const element3Mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    roughness: 0.025,
+    transmission: 0.94,
+    ior: 1.56,
+    reflectivity: 0.92,
     clearcoat: 1.0,
-    clearcoatRoughness: 0.03,
   });
-  const frontGlass = new THREE.Mesh(frontGlassGeo, frontGlassMat);
-  frontGlass.position.z = 0.92;
-  frontGlass.scale.set(1, 1, 0.22);
+  const element3 = new THREE.Mesh(element3Geo, element3Mat);
+  element3.position.set(0, 0, 0.58);
+  element3.scale.set(0.82, 0.82, 0.22);
+  lensGroup.add(element3);
+
+  // Amber optical reflection catch-light
+  const coating3Geo = new THREE.RingGeometry(0.03, 0.19, 36);
+  const coating3Mat = new THREE.MeshBasicMaterial({
+    color: 0xf59e0b,
+    transparent: true,
+    opacity: 0.20,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  });
+  const coating3 = new THREE.Mesh(coating3Geo, coating3Mat);
+  coating3.position.set(0, 0, 0.585);
+  lensGroup.add(coating3);
+
+  // --- ELEMENT 2: Intermediate Meniscus Optical Glass Element (natural Blue & Purple reflections) ---
+  const element2Geo = new THREE.SphereGeometry(0.34, 48, 24, 0, Math.PI * 2, 0, 0.85);
+  const element2Mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff,
+    metalness: 0.08,
+    roughness: 0.02,
+    transmission: 0.92,
+    thickness: 0.2,
+    ior: 1.64,
+    reflectivity: 0.94,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.02,
+  });
+  const element2 = new THREE.Mesh(element2Geo, element2Mat);
+  element2.position.set(0, 0, 0.73);
+  element2.scale.set(0.74, 0.74, -0.28);
+  lensGroup.add(element2);
+
+  // Deep Purple / Violet Multi-Coating Sheen
+  const coating2PurpleGeo = new THREE.RingGeometry(0.04, 0.25, 48);
+  const coating2PurpleMat = new THREE.MeshBasicMaterial({
+    color: 0x9333ea,
+    transparent: true,
+    opacity: 0.26,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  });
+  const coating2Purple = new THREE.Mesh(coating2PurpleGeo, coating2PurpleMat);
+  coating2Purple.position.set(0, 0, 0.735);
+  lensGroup.add(coating2Purple);
+
+  // Royal Blue Optical Multi-Coating Reflection
+  const coating2BlueGeo = new THREE.RingGeometry(0.08, 0.23, 48);
+  const coating2BlueMat = new THREE.MeshBasicMaterial({
+    color: 0x2563eb,
+    transparent: true,
+    opacity: 0.20,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+  });
+  const coating2Blue = new THREE.Mesh(coating2BlueGeo, coating2BlueMat);
+  coating2Blue.position.set(0, 0, 0.738);
+  lensGroup.add(coating2Blue);
+
+  // --- ELEMENT 1: Front Convex Optical Glass Element (subtle Emerald Green S.S.C. reflections) ---
+  // Sits cleanly inside the nameplate bezel (r = 0.308 < 0.32), apex at z = 0.948
+  const element1Geo = new THREE.SphereGeometry(0.42, 64, 32, 0, Math.PI * 2, 0, 0.82);
+  const element1Mat = new THREE.MeshPhysicalMaterial({
+    color: 0xffffff, // 100% crystal-clear refractive glass
+    metalness: 0.0,
+    roughness: 0.012,
+    transmission: 0.96, // Highly transparent to reveal Element 2, Element 3, and aperture!
+    thickness: 0.28,
+    ior: 1.54, // Crown optical glass refractive index
+    reflectivity: 0.96,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.015,
+  });
+  const frontGlass = new THREE.Mesh(element1Geo, element1Mat);
+  frontGlass.position.set(0, 0, 0.82);
+  frontGlass.scale.set(0.70, 0.70, 0.38);
   lensGroup.add(frontGlass);
 
-  // Internal Spherical Lens Element (Deep in the optical chamber with warm amber coat)
-  const rearGlassGeo = new THREE.SphereGeometry(0.36, 28, 20);
-  const rearGlassMat = new THREE.MeshPhysicalMaterial({
-    color: 0x3d281a, // Warm amber anti-reflective coating
-    roughness: 0.06,
-    transmission: 0.88,
-    ior: 1.52,
-    reflectivity: 0.8,
+  // Emerald-Green & Cyan Anti-Reflective Coating Sheen (Canon S.S.C.)
+  const coating1Geo = new THREE.RingGeometry(0.05, 0.295, 48);
+  const coating1Mat = new THREE.MeshBasicMaterial({
+    color: 0x10b981,
+    transparent: true,
+    opacity: 0.22,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
   });
-  const rearGlass = new THREE.Mesh(rearGlassGeo, rearGlassMat);
-  rearGlass.position.z = 0.32;
-  rearGlass.scale.set(1, 1, 0.16);
-  lensGroup.add(rearGlass);
+  const coating1 = new THREE.Mesh(coating1Geo, coating1Mat);
+  coating1.position.set(0, 0, 0.94);
+  lensGroup.add(coating1);
 
   return { root, blades, frontGlass, lensGroup };
 }
@@ -833,6 +1054,82 @@ function triggerMechanicalShutter(isMuted) {
   }
 }
 
+// Helper: Responsive 3D layout calculator for mobile, tablet & desktop
+function getResponsiveConfig(width, height) {
+  const isMobile = width < 640;
+  const isTablet = width >= 640 && width < 1024;
+  const aspect = width / Math.max(height, 1);
+
+  if (isMobile) {
+    return {
+      isMobile: true,
+      isTablet: false,
+      cameraZ: aspect < 0.55 ? 9.8 : 8.9,
+      cameraScale: 0.76,
+      cameraScrollX: -0.28,
+      cameraScrollY: -0.04,
+      cameraScrollZ: 0.85,
+      photoScaleMult: 0.68,
+      photoPositions: [
+        [-1.25, 1.6, -1.2],   // Photo 1: top-left
+        [1.25, 1.45, -0.9],    // Photo 2: top-right
+        [-1.28, -1.5, -0.6],  // Photo 3: bottom-left
+        [1.28, -1.55, -0.7],  // Photo 4: bottom-right
+        [0.0, 2.35, -1.8],    // Photo 5: top-center
+      ],
+      archRadiusX: 1.55,
+      archRadiusY: 1.25,
+      archCenterX: 0.0,
+      archCenterY: 0.1,
+    };
+  } else if (isTablet) {
+    return {
+      isMobile: false,
+      isTablet: true,
+      cameraZ: aspect < 0.8 ? 8.2 : 7.2,
+      cameraScale: 0.88,
+      cameraScrollX: -0.75,
+      cameraScrollY: -0.08,
+      cameraScrollZ: 0.95,
+      photoScaleMult: 0.84,
+      photoPositions: [
+        [-2.0, 1.3, -1.2],
+        [1.95, 1.15, -0.9],
+        [-2.1, -1.3, -0.5],
+        [2.05, -1.25, -0.6],
+        [0.0, 1.95, -1.9],
+      ],
+      archRadiusX: 2.35,
+      archRadiusY: 1.4,
+      archCenterX: 0.4,
+      archCenterY: 0.0,
+    };
+  } else {
+    // Desktop
+    return {
+      isMobile: false,
+      isTablet: false,
+      cameraZ: 6.2,
+      cameraScale: 1.0,
+      cameraScrollX: -1.2,
+      cameraScrollY: -0.1,
+      cameraScrollZ: 1.1,
+      photoScaleMult: 1.0,
+      photoPositions: [
+        [-2.6, 1.1, -1.2],
+        [2.5, 0.95, -0.9],
+        [-2.8, -1.2, -0.5],
+        [2.7, -1.15, -0.6],
+        [0.0, 1.75, -2.0],
+      ],
+      archRadiusX: 3.2,
+      archRadiusY: 1.5,
+      archCenterX: 0.8,
+      archCenterY: -0.1,
+    };
+  }
+}
+
 export default function About3DPhotographyScene() {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
@@ -844,6 +1141,17 @@ export default function About3DPhotographyScene() {
   const [isMuted, setIsMuted] = useState(false);
   const [isHoveringCamera, setIsHoveringCamera] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Dismiss lightbox modal via Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setActivePhoto(null);
+    };
+    if (activePhoto) {
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activePhoto]);
 
   // Aperture & Shutter Capture Trigger
   const handleShutterCapture = useCallback(() => {
@@ -919,22 +1227,30 @@ export default function About3DPhotographyScene() {
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-      // 2. Deep Photographic Gallery Scene
+      // 2. Deep Photographic Gallery Scene with PBR Studio Environment
       scene = new THREE.Scene();
       scene.fog = new THREE.FogExp2(0x121413, 0.038);
 
+      // Studio Lighting Environment Map for Photorealistic PBR Reflections
+      const studioEnvMap = createStudioEnvironment(renderer);
+      scene.environment = studioEnvMap;
+
       // 3. Perspective Camera
-      const aspect = containerRef.current.clientWidth / containerRef.current.clientHeight;
+      const containerW = containerRef.current.clientWidth;
+      const containerH = containerRef.current.clientHeight;
+      const initialCfg = getResponsiveConfig(containerW, containerH);
+
+      const aspect = containerW / containerH;
       camera = new THREE.PerspectiveCamera(40, aspect, 0.1, 100);
-      camera.position.set(0, 0, 6.2);
+      camera.position.set(0, 0, initialCfg.cameraZ);
       scene.add(camera);
 
-      // 4. Studio Lighting Rig Tailored for Brushed Silver & Glass
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+      // 4. Studio Lighting Rig Tailored for Brushed Silver & Optical Glass
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
       scene.add(ambientLight);
 
-      // Warm Golden Key Light (Top-Right)
-      const keyLight = new THREE.DirectionalLight(0xfff3e2, 3.0);
+      // Main Studio Key Softbox (Top-Right, crisp highlights on brushed silver & optical glass)
+      const keyLight = new THREE.DirectionalLight(0xfff5e8, 3.2);
       keyLight.position.set(5.5, 7.5, 6.5);
       keyLight.castShadow = true;
       keyLight.shadow.mapSize.width = 1024;
@@ -943,17 +1259,22 @@ export default function About3DPhotographyScene() {
       scene.add(keyLight);
 
       // Cool Silver Specular Rim Light (Back-Left - highlights brushed silver top deck and knurled dials)
-      const rimLight = new THREE.DirectionalLight(0xa5cbf0, 2.4);
+      const rimLight = new THREE.DirectionalLight(0xa5cbf0, 2.5);
       rimLight.position.set(-6.5, 4.5, -3.5);
       scene.add(rimLight);
 
-      // Emerald Optical Specular Accent Light (Aimed at front convex glass)
-      const glassAccentLight = new THREE.DirectionalLight(0x4ade80, 0.9);
-      glassAccentLight.position.set(1.5, 3.2, 5.0);
-      scene.add(glassAccentLight);
+      // Optical Softbox Specular Highlight (Aimed at front convex glass)
+      const glassSpecularLight = new THREE.DirectionalLight(0xffffff, 1.8);
+      glassSpecularLight.position.set(2.0, 4.0, 5.0);
+      scene.add(glassSpecularLight);
 
-      // Soft Fill Light from Below
-      const fillLight = new THREE.DirectionalLight(0xdbe0d8, 1.3);
+      // Subtle Emerald Coating Reflection Accent
+      const coatingAccentLight = new THREE.DirectionalLight(0x6ee7b7, 0.8);
+      coatingAccentLight.position.set(-2.5, 1.8, 4.0);
+      scene.add(coatingAccentLight);
+
+      // Soft Warm Fill Light from Below
+      const fillLight = new THREE.DirectionalLight(0xdbe0d8, 1.2);
       fillLight.position.set(0, -5, 4);
       scene.add(fillLight);
 
@@ -962,6 +1283,7 @@ export default function About3DPhotographyScene() {
       // compose cleanly with cameraScrollRig's scroll-driven position and rotation.
       const cameraData = buildVintageCanonAT1();
       cameraInteractiveGroup.add(cameraData.root);
+      cameraInteractiveGroup.scale.setScalar(initialCfg.cameraScale);
       blades = cameraData.blades;
       cameraScrollRig.position.set(0, 0, 0);
       scene.add(cameraScrollRig);
@@ -978,11 +1300,17 @@ export default function About3DPhotographyScene() {
       const textureLoader = new THREE.TextureLoader();
       const frameMeshes = [];
 
-      FLOATING_PHOTOS.forEach((photo) => {
+      FLOATING_PHOTOS.forEach((photo, idx) => {
+        const pos = initialCfg.photoPositions[idx] || photo.pos;
         const fGroup = new THREE.Group();
-        fGroup.position.set(photo.pos[0], photo.pos[1], photo.pos[2]);
+        fGroup.position.set(pos[0], pos[1], pos[2]);
         fGroup.rotation.set(photo.rot[0], photo.rot[1], photo.rot[2]);
-        fGroup.userData = { photoData: photo, initialPos: [...photo.pos], initialRot: [...photo.rot] };
+        fGroup.scale.setScalar(initialCfg.photoScaleMult);
+        fGroup.userData = {
+          photoData: photo,
+          initialPos: [...pos],
+          initialRot: [...photo.rot],
+        };
 
         // Mount / Border Frame
         const borderGeo = new THREE.BoxGeometry(photo.scale[0] + 0.12, photo.scale[1] + 0.12, 0.04);
@@ -1065,9 +1393,9 @@ export default function About3DPhotographyScene() {
       scrollTl.to(
         cameraScrollRig.position,
         {
-          x: -1.2,
-          y: -0.1,
-          z: 1.1,
+          x: initialCfg.cameraScrollX,
+          y: initialCfg.cameraScrollY,
+          z: initialCfg.cameraScrollZ,
           ease: "none",
         },
         0
@@ -1089,8 +1417,8 @@ export default function About3DPhotographyScene() {
         scrollTl.to(
           mesh.position,
           {
-            x: Math.sin(offsetAngle) * 3.2 + 0.8,
-            y: Math.cos(offsetAngle) * 1.5 - 0.1,
+            x: Math.sin(offsetAngle) * initialCfg.archRadiusX + initialCfg.archCenterX,
+            y: Math.cos(offsetAngle) * initialCfg.archRadiusY + initialCfg.archCenterY,
             z: Math.cos(offsetAngle) * 1.2 - 0.8,
             ease: "none",
           },
@@ -1110,7 +1438,7 @@ export default function About3DPhotographyScene() {
       scrollTl.to(
         camera.position,
         {
-          z: 4.8,
+          z: initialCfg.cameraZ * 0.78,
           ease: "none",
         },
         0.5
@@ -1201,9 +1529,10 @@ export default function About3DPhotographyScene() {
           }
 
           if (isDraggingCamera) {
-            // Direct drag rotation
-            const rotDeltaY = dx * 0.0055;
-            const rotDeltaX = dy * 0.0045;
+            // Direct drag rotation (responsive touch multiplier for mobile & tablet)
+            const sens = e.pointerType === "touch" ? 0.0068 : 0.0055;
+            const rotDeltaY = dx * sens;
+            const rotDeltaX = dy * (sens * 0.82);
 
             dragRotation.y += rotDeltaY;
             dragRotation.x += rotDeltaX;
@@ -1265,14 +1594,27 @@ export default function About3DPhotographyScene() {
       window.addEventListener("pointercancel", handlePointerUp);
       document.addEventListener("pointerleave", handlePointerLeave);
 
-      // 10. Window Resize Handling
+      // 10. Window Resize Handling (Mobile, Tablet & Desktop responsive updates)
       const handleResize = () => {
         if (!containerRef.current || !renderer || !camera) return;
         const w = containerRef.current.clientWidth;
         const h = containerRef.current.clientHeight;
         camera.aspect = w / h;
+        const currentCfg = getResponsiveConfig(w, h);
+        camera.position.z = currentCfg.cameraZ;
+        cameraInteractiveGroup.scale.setScalar(currentCfg.cameraScale);
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
+
+        frameMeshes.forEach((mesh, idx) => {
+          const pos = currentCfg.photoPositions[idx];
+          if (pos) {
+            mesh.userData.initialPos = [...pos];
+            mesh.position.x = pos[0];
+            mesh.position.z = pos[2];
+            mesh.scale.setScalar(currentCfg.photoScaleMult);
+          }
+        });
       };
       window.addEventListener("resize", handleResize);
 
@@ -1354,6 +1696,7 @@ export default function About3DPhotographyScene() {
         window.removeEventListener("pointercancel", handlePointerUp);
         document.removeEventListener("pointerleave", handlePointerLeave);
         window.removeEventListener("resize", handleResize);
+        if (studioEnvMap) studioEnvMap.dispose();
         renderer.dispose();
         ScrollTrigger.getAll().forEach((st) => st.kill());
       };
@@ -1365,7 +1708,7 @@ export default function About3DPhotographyScene() {
   return (
     <section
       ref={containerRef}
-      className="relative w-full h-screen bg-[#111311] text-[#FAF9F6] overflow-hidden select-none border-b border-[#D8D2C7]/20"
+      className="relative w-full h-[calc(100svh-5rem)] min-h-[540px] sm:min-h-[620px] bg-[#111311] text-[#FAF9F6] overflow-hidden select-none border-b border-[#D8D2C7]/20"
       aria-label="Interactive Vintage 3D Film Camera & Photography Studio Experience"
     >
       {/* Three.js Canvas */}
@@ -1384,108 +1727,112 @@ export default function About3DPhotographyScene() {
       />
 
       {/* Top HUD Telemetry / Metadata Bar */}
-      <div className="absolute top-6 left-6 right-6 z-20 flex items-start justify-between pointer-events-none">
-        <div className="bg-[#181b18]/85 backdrop-blur-md px-5 py-3 rounded-sm border border-white/10 text-white pointer-events-auto shadow-2xl">
-          <div className="flex items-center gap-2.5">
-            <Compass className="w-3.5 h-3.5 text-[#d4af37] animate-pulse" />
-            <span className="text-[10px] tracking-[0.25em] uppercase font-mono text-[#e5ebd9]">
-              CANON AT-1 // 35MM VINTAGE SLR
+      <div className="absolute top-3 sm:top-6 left-3 sm:left-6 right-3 sm:right-6 z-20 flex items-start justify-between gap-2 pointer-events-none">
+        <div className="bg-[#181b18]/90 backdrop-blur-md px-3 py-2 sm:px-5 sm:py-3 rounded-sm border border-white/10 text-white pointer-events-auto shadow-2xl max-w-[58%] sm:max-w-none">
+          <div className="flex items-center gap-1.5 sm:gap-2.5">
+            <Compass className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#d4af37] animate-pulse shrink-0" />
+            <span className="text-[9px] sm:text-[10px] tracking-[0.18em] sm:tracking-[0.25em] uppercase font-mono text-[#e5ebd9] truncate">
+              CANON AT-1 // 35MM SLR
             </span>
           </div>
-          <div className="mt-1 text-xs font-editorial text-stone-200 flex items-center gap-3">
-            <span>Canon FD 50mm 1:1.4 S.S.C.</span>
-            <span className="text-[#a4b591] font-mono text-[11px]">{apertureFStop} Prime</span>
+          <div className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs font-editorial text-stone-200 flex items-center gap-1.5 sm:gap-3 flex-wrap">
+            <span className="truncate">Canon FD 50mm f/1.4</span>
+            <span className="text-[#a4b591] font-mono text-[10px] sm:text-[11px] shrink-0">{apertureFStop}</span>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center gap-3 pointer-events-auto">
+        <div className="flex items-center gap-2 sm:gap-3 pointer-events-auto shrink-0">
           <button
             onClick={() => setIsMuted((prev) => !prev)}
             aria-label={isMuted ? "Unmute Shutter Click" : "Mute Shutter Click"}
-            className="w-10 h-10 rounded-full bg-[#181b18]/85 backdrop-blur-md border border-white/10 flex items-center justify-center text-stone-300 hover:text-white hover:bg-[#222722] transition-colors shadow-xl"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#181b18]/90 backdrop-blur-md border border-white/10 flex items-center justify-center text-stone-300 hover:text-white hover:bg-[#222722] transition-colors shadow-xl active:scale-95"
           >
-            {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
           </button>
 
           <button
             onClick={handleShutterCapture}
-            className="px-4 py-2.5 bg-[#252a24] hover:bg-[#343b32] text-[#f7f8f5] text-[11px] uppercase tracking-[0.22em] font-medium border border-white/15 shadow-2xl flex items-center gap-2.5 transition-all hover:scale-105 active:scale-95"
+            aria-label="Trigger Camera Shutter"
+            className="px-3 py-2 sm:px-4 sm:py-2.5 bg-[#252a24] hover:bg-[#343b32] text-[#f7f8f5] text-[10px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.22em] font-medium border border-white/15 shadow-2xl flex items-center gap-1.5 sm:gap-2.5 transition-all hover:scale-105 active:scale-95"
           >
-            <Camera className="w-3.5 h-3.5 text-[#d4af37]" />
-            <span>Trigger Shutter</span>
+            <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#d4af37]" />
+            <span className="hidden sm:inline">Trigger Shutter</span>
+            <span className="sm:hidden">Shutter</span>
           </button>
         </div>
       </div>
 
       {/* Interactive Reticle Hint */}
-      <div className="absolute left-1/2 bottom-8 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center text-center">
-        <div className="px-5 py-2 bg-[#161a16]/85 backdrop-blur-md rounded-full border border-white/15 text-stone-200 text-[11px] tracking-[0.22em] uppercase font-mono shadow-2xl flex items-center gap-2.5">
-          <Aperture className="w-3.5 h-3.5 text-[#d4af37] animate-spin" style={{ animationDuration: "12s" }} />
-          <span>Click Camera or Floating Frames &bull; Scroll to Compose</span>
+      <div className="absolute left-1/2 bottom-3 sm:bottom-6 md:bottom-8 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center text-center w-[92%] sm:w-auto">
+        <div className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-[#161a16]/90 backdrop-blur-md rounded-full border border-white/15 text-stone-200 text-[10px] sm:text-[11px] tracking-[0.16em] sm:tracking-[0.22em] uppercase font-mono shadow-2xl flex items-center justify-center gap-2 max-w-full">
+          <Aperture className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#d4af37] animate-spin shrink-0" style={{ animationDuration: "12s" }} />
+          <span className="hidden sm:inline">Click or Drag Camera &bull; Scroll to Compose</span>
+          <span className="sm:hidden">Drag Camera &bull; Scroll to Explore</span>
         </div>
-        <div className="mt-2.5 flex items-center gap-1.5 text-[10px] text-stone-400 font-mono tracking-widest uppercase opacity-75">
-          <span>Explore Documentary Story Below</span>
-          <ChevronDown className="w-3.5 h-3.5 animate-bounce" />
+        <div className="mt-1.5 sm:mt-2.5 flex items-center gap-1.5 text-[9px] sm:text-[10px] text-stone-400 font-mono tracking-widest uppercase opacity-75">
+          <span>Explore Documentary Below</span>
+          <ChevronDown className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-bounce" />
         </div>
       </div>
 
       {/* Expanded Lightbox Modal for Clicked 3D Photograph */}
       {activePhoto && (
-        <div className="absolute inset-0 z-40 flex items-center justify-center p-4 sm:p-8 bg-black/80 backdrop-blur-md animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-8 bg-black/85 backdrop-blur-md animate-fade-in">
           <div
             onClick={() => setActivePhoto(null)}
             className="absolute inset-0 cursor-pointer"
+            aria-hidden="true"
           />
 
-          <div className="relative max-w-4xl w-full bg-[#181a18] text-[#FAF9F6] border border-white/15 rounded-sm shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row">
+          <div className="relative max-w-4xl w-full max-h-[92svh] bg-[#181a18] text-[#FAF9F6] border border-white/15 rounded-sm shadow-2xl overflow-hidden z-10 flex flex-col md:flex-row">
             {/* Close Button */}
             <button
               onClick={() => setActivePhoto(null)}
               aria-label="Close Lightbox"
-              className="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/70 hover:bg-[#242921] text-white border border-white/20 flex items-center justify-center transition-colors"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 z-30 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-black/80 hover:bg-[#242921] text-white border border-white/20 flex items-center justify-center transition-colors shadow-lg active:scale-95"
             >
               <X className="w-4 h-4" />
             </button>
 
-            {/* Photo Preview (7 cols) */}
-            <div className="relative md:w-3/5 aspect-[4/3] md:aspect-auto min-h-[340px] md:min-h-[460px] bg-black">
+            {/* Photo Preview (Responsive aspect) */}
+            <div className="relative w-full md:w-3/5 h-52 sm:h-64 md:h-auto md:min-h-[460px] bg-black shrink-0">
               <Image
                 src={activePhoto.src}
                 alt={activePhoto.title}
                 fill
                 priority
-                sizes="(max-width: 1024px) 100vw, 60vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 800px"
                 className="object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent md:hidden" />
             </div>
 
-            {/* Story & Metadata (5 cols) */}
-            <div className="md:w-2/5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
+            {/* Story & Metadata */}
+            <div className="w-full md:w-2/5 p-5 sm:p-6 md:p-8 flex flex-col justify-between overflow-y-auto space-y-4 sm:space-y-6">
               <div>
-                <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-[#a4b591] block mb-2">
+                <span className="text-[9px] sm:text-[10px] uppercase font-mono tracking-[0.25em] text-[#a4b591] block mb-1.5 sm:mb-2">
                   {activePhoto.category}
                 </span>
-                <h3 className="font-editorial text-2xl sm:text-3xl font-light text-white leading-tight">
+                <h3 className="font-editorial text-xl sm:text-2xl md:text-3xl font-light text-white leading-tight">
                   {activePhoto.title}
                 </h3>
-                <p className="text-xs uppercase font-mono tracking-[0.2em] text-stone-400 mt-2">
+                <p className="text-[11px] sm:text-xs uppercase font-mono tracking-[0.18em] text-stone-400 mt-1.5">
                   {activePhoto.location}
                 </p>
-                <div className="mt-4 pt-4 border-t border-white/10 text-xs text-stone-300 font-light leading-relaxed">
+                <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-white/10 text-[11px] sm:text-xs text-stone-300 font-light leading-relaxed">
                   Documented through authentic Scottish light and heirloom 35mm film optics. Every photograph honors honest emotion and genuine human connection.
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-white/10 space-y-3">
-                <div className="text-[11px] font-mono text-stone-400 uppercase tracking-widest">
+              <div className="pt-3 sm:pt-4 border-t border-white/10 space-y-2.5 sm:space-y-3">
+                <div className="text-[10px] sm:text-[11px] font-mono text-stone-400 uppercase tracking-widest">
                   Optics: <span className="text-stone-200">{activePhoto.optics}</span>
                 </div>
-                <div className="flex items-center gap-4 pt-2">
+                <div className="flex items-center gap-4 pt-1 sm:pt-2">
                   <Link
                     href="/portfolio"
-                    className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-[#d4af37] hover:text-white transition-colors border-b border-[#d4af37] pb-1"
+                    className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs uppercase tracking-[0.18em] text-[#d4af37] hover:text-white transition-colors border-b border-[#d4af37] pb-1"
                   >
                     <span>View Portfolio Archive</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
