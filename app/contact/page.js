@@ -6,35 +6,21 @@ import { Mail, Phone, MapPin, Clock, ArrowUpRight } from "lucide-react";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
+import { constructMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema } from "@/lib/schema";
 
-export const metadata = {
-  title: siteConfig.pages.contact.title,
-  description: siteConfig.pages.contact.description,
-  alternates: {
-    canonical: `${siteConfig.siteUrl}/contact`,
-  },
-  openGraph: {
-    title: `${siteConfig.pages.contact.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.contact.description,
-    url: `${siteConfig.siteUrl}/contact`,
-    type: "website",
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: "Contact Pali Photography studio",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.pages.contact.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.contact.description,
-    images: [siteConfig.defaultOgImage],
-  },
-};
+export const metadata = constructMetadata({
+  title: "Contact & Booking Enquiries — Let’s Create Your Timeless Moments",
+  description:
+    "Get in touch with Vivek Pali to discuss your wedding, pre-wedding session, or destination shoot across Scotland, the UK, and beyond.",
+  path: "/contact",
+  keywords: [
+    "Contact Scottish Wedding Photographer",
+    "Edinburgh Wedding Photography Booking",
+    "Glasgow Wedding Inquiries",
+    "Scottish Highlands Elopement Booking",
+  ],
+});
 
 export default function ContactPage() {
   const breadcrumbSchema = getBreadcrumbSchema([

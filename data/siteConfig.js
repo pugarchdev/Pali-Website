@@ -12,7 +12,7 @@ const getSiteUrl = () => {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/+$/, "");
   }
   // Production canonical domain fallback
-  return "https://www.paliphotography.com";
+  return "https://www.paliphoto.co.uk";
 };
 
 export const siteConfig = {
@@ -23,18 +23,18 @@ export const siteConfig = {
   language: "en",
 
   // Core Brand & Identity
-  founder: "Pali",
-  profession: "Wedding, Pre-Wedding & Landscape Photographer",
+  founder: "Vivek Pali",
+  profession: "Documentary Wedding, Pre-Wedding & Landscape Photographer",
   tagline: "Every Love Story Deserves a Beautiful Frame",
   foundingYear: "2019",
   logoUrl: "/media/2024/05/PNG-golden-1.png",
 
   // Default SEO Fallbacks
   defaultTitle:
-    "Pali Photography | Wedding, Pre-Wedding & Landscape Photographer",
+    "Pali Photography | Wedding, Pre-Wedding & Landscape Photographer Scotland",
   titleTemplate: "%s | Pali Photography",
   defaultDescription:
-    "Hello! I’m Pali, a storyteller with a lens, capturing the beauty, raw emotions, and timeless connections that define your wedding day and celebrations.",
+    "Documentary-led wedding, pre-wedding, and landscape photography by Vivek Pali. Capturing heartfelt emotions across Edinburgh, Glasgow, the Scottish Highlands, and destinations worldwide.",
 
   // Primary Social / OpenGraph Asset
   defaultOgImage: "/media/2024/05/17-scaled.jpg",
@@ -42,29 +42,30 @@ export const siteConfig = {
 
   // Business Coordinates & Contacts
   contact: {
-    email: "paliphoto@hotmail.com",
+    email: "bookings@paliphoto.co.uk",
     telephone: "+44 7915 069154",
-    representationEmail: "bookings@paliphotography.com",
-    country: "India",
-    locationGeneral: "Destination & Studio Commissions Available Worldwide",
-    // Physical studio / office address:
+    representationEmail: "bookings@paliphoto.co.uk",
+    country: "United Kingdom",
+    locationGeneral: "Edinburgh, Glasgow, Scottish Highlands & Worldwide Destination Commissions",
     address: null,
   },
 
   // Service Territories
   serviceAreas: [
-    "Destination Weddings",
-    "Pre-Wedding & Engagements",
-    "Landscape & Travel",
-    "Family & Children",
+    "Edinburgh",
+    "Glasgow",
+    "Scottish Highlands (Glencoe, Isle of Skye, Cairngorms, Loch Lomond)",
+    "United Kingdom",
+    "International Destination Weddings",
   ],
 
   // Services offered
   servicesList: [
     "Wedding Photography",
-    "Birthday Photography",
-    "Events & Celebrations",
-    "Private Online Gallery & Professional Editing",
+    "Pre-Wedding & Engagement Sessions",
+    "Birthday & Family Milestones",
+    "Events & Cultural Celebrations",
+    "Landscape & Fine-Art Prints",
   ],
 
   // Social Channels

@@ -3,12 +3,19 @@
 export default function JsonLd({ data }) {
   if (!data) return null;
 
+  const payloads = Array.isArray(data) ? data : [data];
+
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{
-        __html: JSON.stringify(data).replace(/</g, "\\u003c"),
-      }}
-    />
+    <>
+      {payloads.filter(Boolean).map((schema, index) => (
+        <script
+          key={schema["@id"] || schema["@type"] || index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(schema).replace(/</g, "\\u003c"),
+          }}
+        />
+      ))}
+    </>
   );
 }

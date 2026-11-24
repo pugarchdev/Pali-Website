@@ -46,10 +46,10 @@ export default function Navbar() {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ease-in-out ${
           isScrolled
-            ? "bg-[#F5F2EB]/95 backdrop-blur-md shadow-xs py-3 md:py-4 border-b border-[#D8D2C7]/60 text-[#242421]"
+            ? "bg-[#F5F2EB]/95 backdrop-blur-md shadow-xs py-2.5 sm:py-3 border-b border-[#D8D2C7]/60 text-[#242421]"
             : isDarkHero
-            ? "bg-transparent py-5 md:py-6 text-[#FAF9F6]"
-            : "bg-transparent py-5 md:py-6 text-[#242421]"
+            ? "bg-transparent py-3 sm:py-4 lg:py-5 text-[#FAF9F6]"
+            : "bg-transparent py-3 sm:py-4 lg:py-5 text-[#242421]"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex items-center justify-between">
@@ -62,8 +62,8 @@ export default function Navbar() {
             <div
               className={`relative transition-all duration-300 group-hover:scale-105 ${
                 isScrolled
-                  ? "h-12 w-36 sm:h-14 sm:w-44 md:h-16 md:w-48"
-                  : "h-14 w-40 sm:h-16 sm:w-48 md:h-20 md:w-60"
+                  ? "h-10 w-32 sm:h-12 sm:w-38 lg:h-14 lg:w-44"
+                  : "h-12 w-36 sm:h-14 sm:w-44 lg:h-16 lg:w-52"
               }`}
             >
               <Image
@@ -81,8 +81,8 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center space-x-8 text-xs uppercase tracking-[0.2em] font-medium">
+          {/* Desktop Navigation Links (Visible on lg: screens and up to prevent tablet cramping) */}
+          <nav className="hidden lg:flex items-center space-x-6 xl:space-x-8 text-[11px] xl:text-xs uppercase tracking-[0.16em] xl:tracking-[0.2em] font-medium">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
               return (
@@ -107,10 +107,10 @@ export default function Navbar() {
           </nav>
 
           {/* Right Action CTA */}
-          <div className="hidden md:flex items-center space-x-6">
+          <div className="hidden lg:flex items-center space-x-6">
             <Link
               href="/contact"
-              className={`inline-flex items-center gap-2 px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] transition-all duration-300 font-medium border focus:outline-none focus:ring-0 ${
+              className={`inline-flex items-center gap-2 px-4 xl:px-5 py-2 xl:py-2.5 text-[10px] xl:text-[11px] uppercase tracking-[0.16em] xl:tracking-[0.2em] transition-all duration-300 font-medium border focus:outline-none focus:ring-0 ${
                 isScrolled
                   ? "border-[#242421] text-[#242421] hover:bg-[#242421] hover:text-[#FAF9F6]"
                   : isDarkHero
@@ -123,12 +123,12 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Mobile Hamburger Button */}
+          {/* Mobile & Tablet Hamburger Button */}
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Open mobile navigation menu"
-            className={`p-2 md:hidden transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none ${
+            className={`p-2 lg:hidden transition-colors focus:outline-none focus:ring-0 focus-visible:outline-none ${
               isScrolled
                 ? "text-[#242421]"
                 : isDarkHero

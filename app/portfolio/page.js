@@ -1,35 +1,21 @@
 import Portfolio3DCarousel from "@/components/portfolio/Portfolio3DCarousel";
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
+import { constructMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema } from "@/lib/schema";
 
-export const metadata = {
-  title: siteConfig.pages.portfolio.title,
-  description: siteConfig.pages.portfolio.description,
-  alternates: {
-    canonical: `${siteConfig.siteUrl}/portfolio`,
-  },
-  openGraph: {
-    title: `${siteConfig.pages.portfolio.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.portfolio.description,
-    url: `${siteConfig.siteUrl}/portfolio`,
-    type: "website",
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: "Scottish photography portfolio archive 3D exhibition",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.pages.portfolio.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.portfolio.description,
-    images: [siteConfig.defaultOgImage],
-  },
-};
+export const metadata = constructMetadata({
+  title: "Portfolio Archive — Weddings, Pre-Weddings & Landscapes",
+  description:
+    "Explore curated collections: Bonds for Forever, Creative Pre-Weddings, Innocence in Focus, and Majestic Landscapes by Pali Photography.",
+  path: "/portfolio",
+  keywords: [
+    "Scottish Wedding Portfolio",
+    "Edinburgh Wedding Gallery",
+    "Glasgow Pre-Wedding Photos",
+    "Scottish Highlands Landscape Archive",
+  ],
+});
 
 export default function PortfolioPage() {
   const breadcrumbSchema = getBreadcrumbSchema([

@@ -6,36 +6,23 @@ import ImageReveal from "@/components/motion/ImageReveal";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
+import { constructMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema } from "@/lib/schema";
 import About3DClient from "@/components/about/About3DClient";
 
-export const metadata = {
-  title: siteConfig.pages.about.title,
-  description: siteConfig.pages.about.description,
-  alternates: {
-    canonical: `${siteConfig.siteUrl}/about`,
-  },
-  openGraph: {
-    title: `${siteConfig.pages.about.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.about.description,
-    url: `${siteConfig.siteUrl}/about`,
-    type: "profile",
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: "Vivek Pali, Wedding & Lifestyle Photographer",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.pages.about.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.about.description,
-    images: [siteConfig.defaultOgImage],
-  },
-};
+export const metadata = constructMetadata({
+  title: "About Vivek Pali — Storyteller with a Lens & Creative Philosophy",
+  description:
+    "Meet Vivek Pali, Scottish wedding photographer and visual storyteller. Learn about our candid documentary approach, relaxed sessions, and passion for timeless frames.",
+  path: "/about",
+  type: "profile",
+  keywords: [
+    "About Vivek Pali",
+    "Scottish Wedding Photographer Story",
+    "Edinburgh Documentary Photographer",
+    "Glasgow Wedding Storyteller",
+  ],
+});
 
 export default function AboutPage() {
   const principles = [

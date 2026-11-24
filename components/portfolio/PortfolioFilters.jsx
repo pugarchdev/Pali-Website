@@ -1,10 +1,20 @@
 "use client";
 
+import { trackPortfolioEngage } from "@/lib/analytics";
+
 export default function PortfolioFilters({
   categories,
   activeCategory,
   onSelectCategory,
 }) {
+  const handleSelect = (category) => {
+    onSelectCategory(category);
+    trackPortfolioEngage({
+      action: "category_filter",
+      item_name: category,
+    });
+  };
+
   return (
     <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 py-6 border-y border-[#D8D2C7]/60">
       {categories.map((category) => {
@@ -12,7 +22,7 @@ export default function PortfolioFilters({
         return (
           <button
             key={category}
-            onClick={() => onSelectCategory(category)}
+            onClick={() => handleSelect(category)}
             className={`px-4 py-2 text-xs uppercase tracking-[0.2em] transition-all duration-300 font-medium focus:outline-none focus:ring-0 focus-visible:outline-none ${
               isActive
                 ? "bg-[#242421] text-[#FAF9F6] shadow-xs"

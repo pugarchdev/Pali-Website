@@ -4,41 +4,30 @@ import ServicesContent from "@/components/services/ServicesContent";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
-import { getBreadcrumbSchema } from "@/lib/schema";
+import { constructMetadata } from "@/lib/seo";
+import { getBreadcrumbSchema, getServiceSchema } from "@/lib/schema";
 
-export const metadata = {
-  title: siteConfig.pages.services.title,
-  description: siteConfig.pages.services.description,
-  alternates: {
-    canonical: `${siteConfig.siteUrl}/services`,
-  },
-  openGraph: {
-    title: `${siteConfig.pages.services.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.services.description,
-    url: `${siteConfig.siteUrl}/services`,
-    type: "website",
-    images: [
-      {
-        url: siteConfig.defaultOgImage,
-        width: 1200,
-        height: 630,
-        alt: "Pali Photography services and offerings",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${siteConfig.pages.services.title} | ${siteConfig.name}`,
-    description: siteConfig.pages.services.description,
-    images: [siteConfig.defaultOgImage],
-  },
-};
+export const metadata = constructMetadata({
+  title: "Photography Services & Collections — Wedding, Birthday & Events",
+  description:
+    "Cinematic wedding documentation, joyful birthday milestones, and dynamic event photography with private online galleries and master retouching by Vivek Pali.",
+  path: "/services",
+  keywords: [
+    "Wedding Photography Scotland",
+    "Edinburgh Birthday Photographer",
+    "Glasgow Event Photography",
+    "Scottish Highlands Elopement Packages",
+    "Portrait Commissions UK",
+  ],
+});
 
 export default function ServicesPage() {
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", path: "/" },
     { name: "Services", path: "/services" },
   ]);
+
+  const serviceSchemas = services.map(getServiceSchema);
 
   const steps = [
     {
@@ -69,7 +58,7 @@ export default function ServicesPage() {
 
   return (
     <>
-      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={[breadcrumbSchema, ...serviceSchemas]} />
       {/* Interactive 3D Cinematic Hero Exhibition */}
       <ServicesHero3D />
 

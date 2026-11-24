@@ -9,6 +9,7 @@ import Reveal from "@/components/motion/Reveal";
 
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig } from "@/data/siteConfig";
+import { constructMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema, getProjectSchema } from "@/lib/schema";
 
 export function generateStaticParams() {
@@ -22,40 +23,25 @@ export async function generateMetadata({ params }) {
   const project = featuredProjects.find((p) => p.slug === slug);
 
   if (!project) {
-    return {
+    return constructMetadata({
       title: "Project Not Found",
-    };
+      noIndex: true,
+    });
   }
 
-  const projectUrl = `${siteConfig.siteUrl}/projects/${project.slug}`;
-
-  return {
+  return constructMetadata({
     title: `${project.title} — ${project.location}`,
     description: project.description,
-    alternates: {
-      canonical: projectUrl,
-    },
-    openGraph: {
-      title: `${project.title} | ${siteConfig.name}`,
-      description: project.description,
-      url: projectUrl,
-      type: "article",
-      images: [
-        {
-          url: project.heroImage,
-          width: 1200,
-          height: 800,
-          alt: `${project.title} — ${project.location}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: `${project.title} | ${siteConfig.name}`,
-      description: project.description,
-      images: [project.heroImage],
-    },
-  };
+    path: `/projects/${project.slug}`,
+    image: project.heroImage,
+    type: "article",
+    keywords: [
+      project.category,
+      project.location,
+      "Scottish Wedding Story",
+      "Pali Photography Archive",
+    ],
+  });
 }
 
 export default async function ProjectDetailPage({ params }) {

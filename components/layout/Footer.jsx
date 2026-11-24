@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { siteConfig } from "@/data/siteConfig";
+import { trackContactClick } from "@/lib/analytics";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -88,6 +91,13 @@ export default function Footer() {
                 <span className="text-xs text-[#777B60] block uppercase tracking-wider">Direct Email</span>
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
+                  onClick={() =>
+                    trackContactClick({
+                      method: "email",
+                      target: siteConfig.contact.email,
+                      placement: "footer",
+                    })
+                  }
                   className="hover:text-[#FAF9F6] transition-colors border-b border-[#343430] hover:border-[#D8D2C7] pb-0.5"
                 >
                   {siteConfig.contact.email}
@@ -98,6 +108,13 @@ export default function Footer() {
                 <span className="text-xs text-[#777B60] block uppercase tracking-wider">Studio Phone</span>
                 <a
                   href={`tel:${siteConfig.contact.telephone.replace(/\s+/g, '')}`}
+                  onClick={() =>
+                    trackContactClick({
+                      method: "phone",
+                      target: siteConfig.contact.telephone,
+                      placement: "footer",
+                    })
+                  }
                   className="hover:text-[#FAF9F6] transition-colors"
                 >
                   {siteConfig.contact.telephone}

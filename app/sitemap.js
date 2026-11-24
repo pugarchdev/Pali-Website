@@ -1,44 +1,63 @@
-import { siteConfig } from "@/data/siteConfig";
+import { CANONICAL_SITE_URL } from "@/lib/seo";
 import { featuredProjects } from "@/data/portfolio";
+import { services } from "@/data/services";
 
+/**
+ * Dynamic XML Sitemap Generator
+ * @returns {import('next').MetadataRoute.Sitemap}
+ */
 export default function sitemap() {
-  const baseUrl = siteConfig.siteUrl;
+  const currentDate = new Date();
 
-  // Static core routes (lastModified omitted to avoid fabricated timestamps)
+  // 1. Core Primary Static Pages
   const staticRoutes = [
     {
-      url: `${baseUrl}/`,
+      url: `${CANONICAL_SITE_URL}/`,
+      lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/portfolio`,
+      url: `${CANONICAL_SITE_URL}/portfolio`,
+      lastModified: currentDate,
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${CANONICAL_SITE_URL}/services`,
+      lastModified: currentDate,
+      changeFrequency: "monthly",
+      priority: 0.85,
+    },
+    {
+      url: `${CANONICAL_SITE_URL}/about`,
+      lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/services`,
+      url: `${CANONICAL_SITE_URL}/contact`,
+      lastModified: currentDate,
       changeFrequency: "monthly",
       priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      changeFrequency: "monthly",
-      priority: 0.7,
     },
   ];
 
-  // Dynamic project routes
+  // 2. Service Category Landing Routes
+  const serviceRoutes = services.map((service) => ({
+    url: `${CANONICAL_SITE_URL}/services#${service.slug}`,
+    lastModified: currentDate,
+    changeFrequency: "monthly",
+    priority: 0.85,
+  }));
+
+  // 3. Dynamic Case Studies & Portfolio Projects
   const projectRoutes = featuredProjects.map((project) => ({
-    url: `${baseUrl}/projects/${project.slug}`,
+    url: `${CANONICAL_SITE_URL}/projects/${project.slug}`,
+    lastModified: currentDate,
     changeFrequency: "monthly",
     priority: 0.8,
   }));
 
-  return [...staticRoutes, ...projectRoutes];
+  return [...staticRoutes, ...serviceRoutes, ...projectRoutes];
 }

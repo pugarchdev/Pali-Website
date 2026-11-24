@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, AlertCircle, Loader2, ArrowRight } from "lucide-react";
+import { trackLeadSubmission } from "@/lib/analytics";
 
 export default function ContactForm() {
   const searchParams = useSearchParams();
@@ -95,11 +96,17 @@ export default function ContactForm() {
         error: null,
       });
 
+      // Track verified lead submission in GA4
+      trackLeadSubmission({
+        service_type: formData.service,
+        event_location: formData.location || "Scotland / Unspecified",
+      });
+
       // Reset form
       setFormData({
         name: "",
         email: "",
-        service: "Wild Elopements & Highland Ceremonies",
+        service: "Weddings & Pre-Weddings",
         date: "",
         location: "",
         details: "",
@@ -112,7 +119,7 @@ export default function ContactForm() {
         success: false,
         error:
           err.message ||
-          "Could not submit enquiry. Please email studio@alasdairvance.com directly.",
+          "Could not submit enquiry. Please email bookings@paliphoto.co.uk directly.",
       });
     }
   };

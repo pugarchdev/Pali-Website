@@ -58,7 +58,7 @@ export default function Hero() {
   }, [activeMoodIndex, heroPlates.length]);
 
   return (
-    <section className="relative min-h-screen flex items-end pb-14 md:pb-20 overflow-hidden bg-[#242421] text-[#FAF9F6]">
+    <section className="relative min-h-[100svh] min-h-screen flex items-end pt-24 sm:pt-28 md:pt-32 pb-8 sm:pb-12 md:pb-16 overflow-hidden bg-[#242421] text-[#FAF9F6]">
       {/* Stacked Backdrop Image Layers with Seamless Direct Crossfade (No Black Flash) */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {heroPlates.map((plate, index) => {
@@ -95,8 +95,8 @@ export default function Hero() {
         <div className="absolute inset-0 z-10 bg-[#242421]/25 pointer-events-none" />
       </div>
 
-      {/* Reel 2: Layered Technical Aperture HUD (Top Right) */}
-      <div className="absolute top-28 md:top-32 right-6 md:right-12 z-20 hidden md:block">
+      {/* Reel 2: Layered Technical Aperture HUD (Visible on xl: 1280px+ viewports to prevent collision on tablets) */}
+      <div className="absolute top-24 md:top-28 right-6 md:right-12 z-20 hidden xl:block">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
@@ -136,15 +136,15 @@ export default function Hero() {
 
       {/* Hero Content Container */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full">
-        <div className="max-w-4xl space-y-8">
+        <div className="max-w-4xl space-y-4 sm:space-y-6 md:space-y-8">
           {/* Eyebrow badge */}
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="inline-flex items-center gap-3 text-xs uppercase tracking-[0.28em] text-[#D8D2C7]"
+            className="inline-flex items-center gap-2 sm:gap-3 text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.28em] text-[#D8D2C7]"
           >
-            <span className="w-8 h-[1px] bg-[#777B60]" />
+            <span className="w-6 sm:w-8 h-[1px] bg-[#777B60]" />
             <span className="flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-[#777B60]" />
               Vivek Pali — Professional Photographer
@@ -152,7 +152,7 @@ export default function Hero() {
           </motion.div>
 
           {/* Staggered Word Reveal Headline */}
-          <h1 className="font-editorial text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight leading-[0.95] text-[#FAF9F6]">
+          <h1 className="font-editorial text-3xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl tracking-tight leading-[1.02] sm:leading-[0.98] text-[#FAF9F6] max-w-3xl xl:max-w-4xl">
             {headlineWords.map((word, idx) => (
               <motion.span
                 key={idx}
@@ -163,7 +163,7 @@ export default function Hero() {
                   delay: 0.3 + idx * 0.08,
                   ease: [0.2, 0.9, 0.3, 1],
                 }}
-                className={`inline-block mr-3 md:mr-4 ${word === "&" || word === "Mist."
+                className={`inline-block mr-2.5 sm:mr-3 md:mr-4 ${word === "&" || word === "Mist."
                     ? "italic font-light text-[#D8D2C7]"
                     : ""
                   }`}
@@ -178,19 +178,19 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.9 }}
-            className="grid grid-cols-1 md:grid-cols-12 gap-6 items-end pt-1"
+            className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6 items-end pt-1"
           >
-            <p className="md:col-span-8 text-base md:text-lg text-[#D8D2C7] font-light leading-relaxed max-w-xl">
+            <p className="md:col-span-7 lg:col-span-8 text-sm sm:text-base md:text-lg text-[#D8D2C7] font-light leading-relaxed max-w-xl">
               A heartfelt, documentary-led storytelling approach by Vivek Pali,
               capturing raw emotions, candid connections, and timeless milestones.
               Dedicated photography services across weddings, creative pre-weddings,
               and majestic landscapes.
             </p>
 
-            <div className="md:col-span-4 flex items-center md:justify-end gap-4">
+            <div className="md:col-span-5 lg:col-span-4 flex items-center md:justify-end gap-4">
               <Link
                 href="/portfolio"
-                className="group inline-flex items-center gap-3 px-6 py-3.5 bg-[#FAF9F6] text-[#242421] text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#F5F2EB] transition-all duration-300 shadow-md"
+                className="group inline-flex items-center gap-2.5 sm:gap-3 px-5 sm:px-6 py-3 sm:py-3.5 bg-[#FAF9F6] text-[#242421] text-[11px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.2em] font-medium hover:bg-[#F5F2EB] transition-all duration-300 shadow-md active:scale-95"
               >
                 <span>Explore The Work</span>
                 <ArrowDownRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
@@ -203,7 +203,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 1.1 }}
-            className="pt-4 border-t border-[#FAF9F6]/15 flex flex-wrap items-center gap-3"
+            className="pt-3 sm:pt-4 border-t border-[#FAF9F6]/15 flex flex-wrap items-center gap-2 sm:gap-3"
           >
             <span className="text-[10px] uppercase tracking-[0.25em] text-[#777B60] flex items-center gap-1.5 mr-2">
               <Sparkles className="w-3 h-3 text-[#777B60]" />
