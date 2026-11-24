@@ -48,41 +48,52 @@ export default function Hero() {
   const currentPlate = heroPlates[activeMoodIndex];
   const headlineWords = ["Stories", "Told", "Through", "Light", "&", "Mist."];
 
-  // Automate backdrop rotation with a 5-second interval
+  // Automate backdrop rotation with a 6-second interval, resetting on manual selection
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveMoodIndex((prevIndex) => (prevIndex + 1) % heroPlates.length);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(timer);
   }, [activeMoodIndex, heroPlates.length]);
 
   return (
     <section className="relative min-h-screen flex items-end pb-14 md:pb-20 overflow-hidden bg-[#242421] text-[#FAF9F6]">
-      {/* Dynamic Background Image with Smooth Crossfade and Scale Reveal */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={currentPlate.id}
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.98 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 z-0"
-        >
-          <Image
-            src={currentPlate.imageUrl}
-            alt={`${currentPlate.title} — ${currentPlate.region}`}
-            fill
-            priority
-            fetchPriority="high"
-            sizes="100vw"
-            className="object-cover object-center brightness-[0.70] contrast-[1.06]"
-          />
-          {/* Subtle photographic vignette and editorial darkening for readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#242421] via-transparent to-[#242421]/50 pointer-events-none" />
-          <div className="absolute inset-0 bg-[#242421]/25 pointer-events-none" />
-        </motion.div>
-      </AnimatePresence>
+      {/* Stacked Backdrop Image Layers with Seamless Direct Crossfade (No Black Flash) */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {heroPlates.map((plate, index) => {
+          const isActive = index === activeMoodIndex;
+          return (
+            <motion.div
+              key={plate.id}
+              initial={false}
+              animate={{
+                opacity: isActive ? 1 : 0,
+                scale: isActive ? 1 : 1.05,
+                zIndex: isActive ? 2 : 1,
+              }}
+              transition={{
+                duration: 1.4,
+                ease: [0.16, 1, 0.3, 1],
+              }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={plate.imageUrl}
+                alt={`${plate.title} — ${plate.region}`}
+                fill
+                priority
+                sizes="100vw"
+                className="object-cover object-center brightness-[0.70] contrast-[1.06]"
+              />
+            </motion.div>
+          );
+        })}
+
+        {/* Subtle photographic vignette and editorial darkening for readability */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-t from-[#242421] via-transparent to-[#242421]/50 pointer-events-none" />
+        <div className="absolute inset-0 z-10 bg-[#242421]/25 pointer-events-none" />
+      </div>
 
       {/* Reel 2: Layered Technical Aperture HUD (Top Right) */}
       <div className="absolute top-28 md:top-32 right-6 md:right-12 z-20 hidden md:block">

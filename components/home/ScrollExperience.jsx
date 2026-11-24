@@ -37,7 +37,7 @@ export default function ScrollExperience() {
       className="relative h-[300vh] bg-[#242421] text-[#FAF9F6]"
     >
       {/* Sticky Fullscreen Viewport Window */}
-      <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+      <div className="sticky top-0 h-screen h-[100svh] w-full flex items-center justify-center overflow-hidden">
         {/* Dynamic Expanding Photographic Canvas */}
         <motion.div
           style={{
@@ -64,11 +64,11 @@ export default function ScrollExperience() {
 
           {/* Vignette & Edge Gradient Shading for Maximum Text Readability */}
           <div className="absolute inset-0 bg-radial from-[#242421]/60 via-[#242421]/40 to-[#242421]/80 pointer-events-none z-10" />
-          <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-b from-[#242421]/90 via-[#242421]/45 to-transparent pointer-events-none z-10" />
-          <div className="absolute bottom-0 inset-x-0 h-36 bg-gradient-to-t from-[#242421]/90 via-[#242421]/45 to-transparent pointer-events-none z-10" />
+          <div className="absolute top-0 inset-x-0 h-28 sm:h-36 bg-gradient-to-b from-[#242421]/90 via-[#242421]/45 to-transparent pointer-events-none z-10" />
+          <div className="absolute bottom-0 inset-x-0 h-28 sm:h-36 bg-gradient-to-t from-[#242421]/90 via-[#242421]/45 to-transparent pointer-events-none z-10" />
 
-          {/* Top Telemetry Header */}
-          <div className="absolute top-8 left-8 right-8 z-20 flex items-center justify-between text-xs uppercase tracking-[0.25em]">
+          {/* Top Telemetry Header (Desktop & Tablet) */}
+          <div className="absolute top-8 left-8 right-8 z-20 hidden md:flex items-center justify-between text-xs uppercase tracking-[0.25em]">
             <div className="flex items-center gap-2 px-3.5 py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/20 shadow-md">
               <Compass className="w-4 h-4 text-[#C5A880]" />
               <span className="text-[#FAF9F6] font-medium tracking-[0.22em]">Scroll-Driven Visual Journey</span>
@@ -79,22 +79,22 @@ export default function ScrollExperience() {
           </div>
 
           {/* Centered Staged Narratives */}
-          <div className="absolute inset-0 z-20 flex items-center justify-center p-6 text-center">
+          <div className="absolute inset-0 z-20 flex items-center justify-center p-4 sm:p-6 md:p-8 text-center">
             {/* Stage 1: The Unspoken Bond */}
             <motion.div
               style={{ opacity: text1Opacity, y: text1Y }}
-              className="max-w-3xl space-y-4 pointer-events-none"
+              className="max-w-2xl md:max-w-3xl space-y-3 sm:space-y-4 pointer-events-none px-2"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-2">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-1 sm:mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
-                <span className="text-xs uppercase tracking-[0.28em] text-[#FAF9F6] font-medium">
+                <span className="text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.28em] text-[#FAF9F6] font-medium whitespace-nowrap">
                   Chapter 01 • The Unspoken Bond
                 </span>
               </div>
-              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light text-[#FAF9F6] leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+              <h2 className="font-editorial text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-[#FAF9F6] leading-[1.08] sm:leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
                 Every Love Story Deserves a Frame.
               </h2>
-              <p className="text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-lg md:max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 Scroll down to enter a world where raw emotions, joyful laughter, and unconditional connections take center stage.
               </p>
             </motion.div>
@@ -102,18 +102,18 @@ export default function ScrollExperience() {
             {/* Stage 2: Felt, Not Posed */}
             <motion.div
               style={{ opacity: text2Opacity, y: text2Y }}
-              className="absolute max-w-3xl space-y-4 pointer-events-none"
+              className="absolute max-w-2xl md:max-w-3xl space-y-3 sm:space-y-4 pointer-events-none px-2"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-2">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-1 sm:mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
-                <span className="text-xs uppercase tracking-[0.28em] text-[#FAF9F6] font-medium">
+                <span className="text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.28em] text-[#FAF9F6] font-medium whitespace-nowrap">
                   Chapter 02 • Felt, Not Posed
                 </span>
               </div>
-              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light text-[#FAF9F6] leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+              <h2 className="font-editorial text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-[#FAF9F6] leading-[1.08] sm:leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
                 Unveiling Love Through the Lens.
               </h2>
-              <p className="text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-lg md:max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 From spontaneous giggles to gentle embraces, we ensure every moment radiates warmth, comfort, and effortless happiness.
               </p>
             </motion.div>
@@ -121,32 +121,32 @@ export default function ScrollExperience() {
             {/* Stage 3: The Permanent Memory */}
             <motion.div
               style={{ opacity: text3Opacity, y: text3Y }}
-              className="absolute max-w-3xl space-y-6"
+              className="absolute max-w-2xl md:max-w-3xl space-y-3 sm:space-y-5 md:space-y-6 px-2 w-full"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-2">
+              <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 sm:py-1.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/25 shadow-lg mb-1 sm:mb-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
-                <span className="text-xs uppercase tracking-[0.28em] text-[#FAF9F6] font-medium">
+                <span className="text-[10px] sm:text-xs uppercase tracking-[0.18em] sm:tracking-[0.28em] text-[#FAF9F6] font-medium whitespace-nowrap">
                   Chapter 03 • The Permanent Memory
                 </span>
               </div>
-              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light text-[#FAF9F6] leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
+              <h2 className="font-editorial text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-[#FAF9F6] leading-[1.08] sm:leading-tight drop-shadow-[0_4px_24px_rgba(0,0,0,0.85)]">
                 Each Frame Holds A Dream.
               </h2>
-              <p className="text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
+              <p className="text-xs sm:text-sm md:text-base text-[#FAF9F6]/90 font-normal max-w-lg md:max-w-xl mx-auto leading-relaxed drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)]">
                 Together, we capture heirloom imagery that will transport you back to the feeling of this day for a lifetime.
               </p>
 
-              <div className="pt-4 flex items-center justify-center gap-4">
+              <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-4 max-w-xs sm:max-w-none mx-auto w-full">
                 <Link
                   href="/projects/bonds-for-forever"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#FAF9F6] text-[#242421] text-xs uppercase tracking-[0.2em] font-medium hover:bg-[#F5F2EB] transition-colors shadow-lg"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 bg-[#FAF9F6] text-[#242421] text-[11px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] font-medium hover:bg-[#F5F2EB] transition-all shadow-lg active:scale-95"
                 >
-                  <span>Explore Wedding Series</span>
-                  <ArrowUpRight className="w-3.5 h-3.5" />
+                  <span className="whitespace-nowrap">Explore Wedding Series</span>
+                  <ArrowUpRight className="w-3.5 h-3.5 shrink-0" />
                 </Link>
                 <Link
                   href="/portfolio"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-[#242421]/80 backdrop-blur-md border border-[#FAF9F6]/30 text-xs uppercase tracking-[0.2em] text-[#FAF9F6] hover:bg-[#343430] transition-colors shadow-md"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-6 sm:py-3.5 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/30 text-[11px] sm:text-xs uppercase tracking-[0.16em] sm:tracking-[0.2em] text-[#FAF9F6] hover:bg-[#343430] transition-all shadow-md active:scale-95 whitespace-nowrap"
                 >
                   <span>View All Collections</span>
                 </Link>
@@ -154,8 +154,8 @@ export default function ScrollExperience() {
             </motion.div>
           </div>
 
-          {/* Bottom HUD: Live Coordinate & Scroll Telemetry */}
-          <div className="absolute bottom-8 left-8 right-8 z-20 flex items-end justify-between text-xs">
+          {/* Bottom HUD: Live Coordinate & Scroll Telemetry (Desktop & Tablet) */}
+          <div className="absolute bottom-8 left-8 right-8 z-20 hidden md:flex items-end justify-between text-xs">
             <div className="px-3.5 py-2 bg-[#242421]/85 backdrop-blur-md border border-[#FAF9F6]/15 shadow-md">
               <span className="text-[10px] text-[#C5A880] uppercase tracking-wider block font-mono">MEDIUM</span>
               <span className="font-editorial text-sm text-[#FAF9F6]">Natural Light &amp; Candid Realism</span>
